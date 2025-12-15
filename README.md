@@ -26,7 +26,7 @@
 1. 克隆本配置仓库到你的 Neovim 配置目录：
 
    ```bash
-   git clone <仓库地址> ~/.config/nvim
+   git clone https://github.com/kody-code/NeoVim.git ~/.config/nvim
    ```
 
 2. 启动 Neovim，Lazy 包管理器会自动安装所需插件：
