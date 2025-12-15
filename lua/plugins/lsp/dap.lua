@@ -20,8 +20,6 @@ return {
 			-- 调试适配器安装
 			-- Python
 			"mfussenegger/nvim-dap-python",
-			-- Rust
-			"simrat39/rust-tools.nvim",
 		},
 		config = function()
 			local dap = require("dap")
