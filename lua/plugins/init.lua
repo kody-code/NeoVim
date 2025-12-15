@@ -25,6 +25,7 @@ require("lazy").setup({
 	require("plugins.comment"),
 	require("plugins.project"),
 	require("plugins.runner"),
+	require("plugins.rustaceanvim"),
 	-- LSP
 	require("plugins.lsp.mason"),
 	require("plugins.lsp.lspconfig"),

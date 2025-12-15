@@ -94,7 +94,6 @@ return {
 
 				rustfmt = {
 					command = "rustfmt",
-					args = { "--emit=stdout" },
 					stdin = true,
 				},
 			},
