@@ -24,6 +24,13 @@ return {
 				"pyright",
 				"vim-language-server",
 
+				"gopls",
+				"golines",
+				"golangci-lint",
+
+				"rust-analyzer",
+				"rustfmt",
+
 				-- 格式化工具
 				"stylua",
 				"prettier",

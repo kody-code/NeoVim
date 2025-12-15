@@ -17,17 +17,86 @@ return {
 			-- 5. Mason 集成
 			"williamboman/mason.nvim",
 			"jay-babu/mason-nvim-dap.nvim",
-			-- 6. 调试适配器安装 (Python)
+			-- 调试适配器安装
+			-- Python
 			"mfussenegger/nvim-dap-python",
+			-- Rust
+			"simrat39/rust-tools.nvim",
 		},
 		config = function()
 			local dap = require("dap")
 			local dapui = require("dapui")
 
-			-- 配置 Python 调试器
+			-- Python 调试配置
 			require("dap-python").setup("python", {
 				console = "integratedTerminal",
 			})
+
+			-- Rust 调试配置
+			local rust_lsp_config = {
+				name = "rust_analyzer",
+				capabilities = capabilities,
+				on_attach = function(client, bufnr)
+					-- 保留原有的 on_attach 逻辑
+					on_attach(client, bufnr)
+
+					-- Rust 特定快捷键
+					vim.keymap.set(
+						"n",
+						"<leader>rr",
+						"<cmd>RustRunnables<CR>",
+						{ buffer = bufnr, desc = "Rust 运行选项" }
+					)
+					vim.keymap.set(
+						"n",
+						"<leader>rc",
+						"<cmd>RustOpenCargo<CR>",
+						{ buffer = bufnr, desc = "打开 Cargo.toml" }
+					)
+				end,
+				settings = {
+					["rust-analyzer"] = {
+						cargo = {
+							allFeatures = true,
+						},
+						checkOnSave = {
+							command = "clippy", -- 使用 clippy 进行代码检查
+						},
+					},
+				},
+			}
+
+			-- Golang 调试配置
+			dap.adapters.go = {
+				type = "server",
+				port = "${port}",
+				executable = {
+					command = "dlv",
+					args = { "dap", "-l", "127.0.0.1:${port}" },
+				},
+			}
+			dap.configurations.go = {
+				{
+					type = "go",
+					name = "Launch",
+					request = "launch",
+					program = "${file}",
+				},
+				{
+					type = "go",
+					name = "Launch test",
+					request = "launch",
+					mode = "test",
+					program = "${file}",
+				},
+				{
+					type = "go",
+					name = "Launch test (package)",
+					request = "launch",
+					mode = "test",
+					program = "${workspaceFolder}",
+				},
+			}
 
 			-- 虚拟文本配置
 			require("nvim-dap-virtual-text").setup({
@@ -85,7 +154,7 @@ return {
 
 			-- Mason DAP 配置
 			require("mason-nvim-dap").setup({
-				ensure_installed = { "python" },
+				ensure_installed = { "python", "delve", "codelldb" },
 				handlers = {
 					function(config)
 						require("mason-nvim-dap").default_setup(config)

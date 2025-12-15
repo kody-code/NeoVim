@@ -21,43 +21,73 @@ return {
 					end,
 				})
 			end
-
-			-- 其他 on_attach 配置...
 		end
 
-		-- ✅ 修正: 这里使用 LSP 服务器名称 (不是 Mason 包名)
+		local server_configs = {
+			lua_ls = {
+				settings = {
+					Lua = {
+						runtime = { version = "LuaJIT" },
+						diagnostics = { globals = { "vim" } },
+						workspace = {
+							library = {
+								[vim.fn.expand("$VIMRUNTIME/lua")] = true,
+								[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
+							},
+						},
+						telemetry = { enable = false },
+					},
+				},
+			},
+			gopls = {
+				settings = {
+					gopls = {
+						gofumpt = true, -- 使用 gofumpt 格式化
+						usePlaceholders = true,
+						completeUnimported = true,
+						analyses = {
+							unusedparams = true,
+							shadow = true,
+						},
+					},
+				},
+			},
+			rust_analyzer = {
+				settings = {
+					["rust-analyzer"] = {
+						cargo = {
+							allFeatures = true,
+						},
+						checkOnSave = {
+							command = "clippy", -- 使用 clippy 进行代码检查
+						},
+					},
+				},
+			},
+		}
+
 		require("mason-lspconfig").setup({
 			ensure_installed = {
-				"lua_ls", -- LSP 服务器名称
-				"pyright", -- LSP 服务器名称 (与包名相同)
-				"jsonls", -- JSON LSP 服务器
-				"vimls", -- Vim Script LSP 服务器
+				"lua_ls",
+				"pyright",
+				"jsonls",
+				"vimls",
+
+				"gopls",
+				"rust_analyzer",
 			},
 			handlers = {
 				function(server_name)
-					local opts = {
-						capabilities = capabilities,
-						on_attach = on_attach,
-					}
-
-					-- 特定服务器配置
-					if server_name == "lua_ls" then
-						opts.settings = {
-							Lua = {
-								runtime = { version = "LuaJIT" },
-								diagnostics = { globals = { "vim" } },
-								workspace = {
-									library = {
-										[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-										[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-									},
-								},
-								telemetry = { enable = false },
+					vim.lsp.config({
+						servers = {
+							[server_name] = {
+								cmd = require("lspconfig")[server_name].document_config.default_config.cmd,
+								capabilities = capabilities,
+								on_attach = on_attach,
+								settings = server_configs[server_name] and server_configs[server_name].settings or {},
 							},
-						}
-					end
-
-					require("lspconfig")[server_name].setup(opts)
+						},
+					})
 				end,
 			},
 		})

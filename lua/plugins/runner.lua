@@ -7,6 +7,8 @@ return {
 				python = "python -u",
 				lua = "lua",
 				sh = "bash",
+				go = "go run",
+				rust = "cargo run",
 			},
 		})
 		-- 添加快捷键

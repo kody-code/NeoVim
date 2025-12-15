@@ -34,7 +34,8 @@ return {
 				scss = { "prettierd", "prettier" },
 				less = { "prettierd", "prettier" },
 				sh = { "shfmt" },
-				["*"] = { "lsp" }, -- 任何文件类型的后备
+				go = { "gofumpt", "golines" },
+				rust = { "rustfmt" },
 			},
 
 			-- 精确配置每个格式化工具
@@ -80,6 +81,22 @@ return {
 					args = { "-i", "2", "-ci", "-bn" }, -- 2空格缩进，case缩进，二元运算符换行
 					stdin = true,
 				},
+
+				gofumpt = {
+					command = "gofumpt",
+					stdin = true,
+				},
+				golines = {
+					command = "golines",
+					args = { "--max-len=120", "-w" },
+					stdin = false,
+				},
+
+				rustfmt = {
+					command = "rustfmt",
+					args = { "--emit=stdout" },
+					stdin = true,
+				},
 			},
 
 			-- 保存时自动格式化
@@ -110,6 +127,10 @@ return {
 				"black",
 				"isort",
 				"shfmt",
+
+				"gofumpt",
+				"golines",
+				"rustfmt",
 			}
 
 			local status = {}
